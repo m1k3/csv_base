@@ -1,6 +1,6 @@
 # CsvBase
 
-TODO: Write a gem description
+A few utility modules that help with exporting csv using Postgresql
 
 ## Installation
 
