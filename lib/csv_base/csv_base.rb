@@ -18,7 +18,7 @@ module CsvBase
     end
 
     def bom
-      Export::CsvBase::BOM
+      ::CsvBase::CsvBase::BOM
     end
 
     private
