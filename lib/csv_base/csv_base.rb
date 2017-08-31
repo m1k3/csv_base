@@ -5,12 +5,17 @@ module CsvBase
     include Enumerable
 
     def each
-      yield bom
-      yield encoded(header)
+      bom, enc = encoding_details
+      yield bom unless bom.nil?
+      yield encoded(header, enc)
 
       generate_csv do |row|
-        yield encoded(row)
+        yield encoded(row, enc)
       end
+    end
+
+    def encoding
+      raise "Implement #encoding in your subclass"
     end
 
     def header
@@ -23,8 +28,19 @@ module CsvBase
 
     private
 
-    def encoded(string)
-      string.encode('UTF-16LE', undef: :replace)
+    def encoding_details
+      case encoding && encoding.downcase.gsub('-', '').to_sym
+      when :utf8
+        [nil, 'UTF-8']
+      when :utf16le
+        [BOM, 'UTF-16LE']
+      else
+        raise ArgumentError, "Unknown encoding #{encoding.inspect}"
+      end
+    end
+
+    def encoded(string, enc)
+      string.encode(enc, undef: :replace)
     end
 
     # WARNING: This will most likely NOT work on jruby!!!
